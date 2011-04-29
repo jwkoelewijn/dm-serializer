@@ -22,6 +22,19 @@ module DataMapper
         end
       end
     end
+
+    # add properties as a result from the serialization callback
+    def invoke_serialization_callback
+      serialization_callback_result = {}
+      if respond_to?(:serialization_callback)
+        serialization_callback_result = serialization_callback
+        unless serialization_callback_result.is_a?(Hash)
+          raise "#serialization_callback should return a Hash, found #{serialization_callback_result.class}"
+        end
+      end
+      serialization_callback_result
+    end
+
   end
 
   Model.append_inclusions(Serializer)

@@ -26,6 +26,9 @@ module DataMapper
         row = properties_to_serialize(options).map do |property|
           __send__(property.name).to_s
         end
+        row += invoke_serialization_callback.map do |key, value|
+          value.to_s
+        end
         csv << row
       end
     end

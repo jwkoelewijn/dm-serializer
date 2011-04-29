@@ -64,8 +64,27 @@ if defined?(::CSV)
           george.to_csv.should match(/false/)
         end
       end
-
     end
+  end
+
+  describe DataMapper::Serialize, '#to_csv' do
+
+    it "supports serialization_callbacks" do
+      class Horse
+        include DataMapper::Resource
+
+        property :id, Serial
+        property :name, String
+
+        def serialization_callback
+          { :external_name => "#{name}_external" }
+        end
+      end
+
+      horse = Horse.new(:name => 'legolas')
+      horse.to_csv.should match(/legolas_external/)
+    end
+
   end
 else
   warn "[WARNING] Cannot require 'faster_csv' or 'csv', not running #to_csv specs"

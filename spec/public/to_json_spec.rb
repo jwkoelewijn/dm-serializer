@@ -73,3 +73,38 @@ describe DataMapper::Serializer, '#as_json' do
     Motorcycle.new.as_json[:type].should == "Motorcycle"
   end
 end
+
+describe DataMapper::Serializer, '#as_json' do
+  before(:each) do
+    class Horse
+      include DataMapper::Resource
+
+      property :id, Serial
+      property :name, String
+
+      def serialization_callback
+        { :external_name => "#{name}_external" }
+      end
+    end
+  end
+
+  it "supports serialization_callbacks" do
+    horse = Horse.new(:name => 'legolas')
+    horse.as_json[:external_name].should == 'legolas_external'
+  end
+
+  it "should raise an exception when the serialization_callback does not return a Hash" do
+    class Horse
+      def serialization_callback
+        name
+      end
+    end
+
+    expect { Horse.new(:name => 'legolas').as_json }.to raise_error
+  end
+
+  it "should not raise an exception when the serialization_callback returns a Hash" do
+    expect { Horse.new(:name => 'legolas').as_json }.to_not raise_error
+  end
+
+end

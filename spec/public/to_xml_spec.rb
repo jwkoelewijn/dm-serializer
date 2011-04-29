@@ -107,4 +107,23 @@ require 'rexml/document'
       end
     end
   end
+
+  describe "adding properties from serialization_callback as well" do
+    it "should call the serialization_callback method and add the results" do
+      class Horse
+        include DataMapper::Resource
+
+        property :id, Serial
+        property :name, String
+
+        def serialization_callback
+          { :external_name => "#{name}_external" }
+        end
+      end
+
+      horse = Horse.create(:name => 'legolas')
+      result = horse.to_xml
+      puts REXML::Document.new(result).elements[1].elements["external_name"].text == 'legolas_external'
+    end
+  end
 end

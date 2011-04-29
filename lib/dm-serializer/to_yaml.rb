@@ -59,6 +59,10 @@ module DataMapper
         value = __send__(method)
         coder.add(method, value.is_a?(Class) ? value.to_s : value)
       end
+
+      invoke_serialization_callback.each do |key, value|
+        coder.add(key.to_s, value.is_a?(Class) ? value.to_s : value)
+      end
     end
 
   private

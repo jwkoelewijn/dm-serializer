@@ -56,4 +56,20 @@ describe DataMapper::Serializer, '#to_yaml' do
     result[0]['name'].should == 'Berta'
   end
 
+  it "supports serialization_callbacks" do
+    class Horse
+      include DataMapper::Resource
+
+      property :id, Serial
+      property :name, String
+
+      def serialization_callback
+        { :external_name => "#{name}_external" }
+      end
+    end
+
+    horse = Horse.create(:name => 'legolas')
+    result = @harness.deserialize(YAML.dump(horse))
+    result['external_name'].should == 'legolas_external'
+  end
 end

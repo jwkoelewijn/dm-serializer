@@ -59,6 +59,15 @@ module DataMapper
         end
       end
 
+      invoke_serialization_callback.each do |key, value|
+        xml_key_name = key.to_s.gsub(/[^a-z0-9_]/, '')
+        if value.respond_to?(:to_xml_document)
+          xml.add_xml(root, value.to_xml_document)
+        else
+          xml.add_node(root, xml_key_name, value.to_s)
+        end
+      end
+
       doc
     end
 

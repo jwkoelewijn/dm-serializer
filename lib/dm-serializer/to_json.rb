@@ -31,6 +31,8 @@ module DataMapper
         result[method] = __send__(method)
       end
 
+      result.merge! invoke_serialization_callback
+
       # Note: if you want to include a whole other model via relation, use
       # :methods:
       #
